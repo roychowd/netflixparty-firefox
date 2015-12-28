@@ -5,9 +5,7 @@
   "description": "A tool for synchronized Netflix consumption.",
   "version": "1.0.0",
   "permissions": [
-    "tabs",
-    "http://*/*",
-    "https://*/*"
+    "activeTab"
   ],
   "browser_action": {
     "default_icon": {

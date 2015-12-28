@@ -2,6 +2,7 @@
 <html>
   <head>
     <title>Hashpass</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
     <style type="text/css">
       html {
         margin: 0;
@@ -95,11 +96,22 @@
         color: #dac6d0;
       }
 
+      button:disabled {
+        cursor: default;
+        background-color: #794e66;
+        border-bottom: 3px solid #59424d;
+        color: #b7acb6;
+      }
+
       button.selected {
         cursor: default;
         background-color: #862052;
         border-bottom: 3px solid #862052;
         color: #f1dbe6;
+      }
+
+      #spinner {
+        margin-left: 32px;
       }
     </style>
     <script type="text/javascript" src="jquery.js"></script>
@@ -110,8 +122,9 @@
       <p class="small-bottom-margin">Session ID:</p>
       <input id="session-id" class="small-top-margin" type="text" />
       <p>
-        <button id="join-session" type="button">Join session</button>
+        <button id="join-session" type="button" disabled="true">Join session</button>
         <button id="new-session" type="button">New session</button>
+        <i id="spinner" class="fa fa-circle-o-notch fa-spin hidden"></i>
       </p>
     </div>
     <div class="some-error hidden">
