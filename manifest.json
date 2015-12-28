@@ -3,7 +3,7 @@
 
   "name": "Netflix Party",
   "description": "A tool for synchronized Netflix consumption.",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "permissions": [
     "activeTab"
   ],

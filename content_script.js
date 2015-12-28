@@ -31,18 +31,47 @@
     // video duration in milliseconds
     var duration = Math.floor(jQuery('.player-video-wrapper video')[0].duration * 1000);
 
+    // hide the playback controls
+    var hideControls = function() {
+      thingsHappening += 1;
+      var player = jQuery('#netflix-player');
+      var clickX = 100; // relative to the document
+      var clickY = 100; // relative to the document
+      var eventOptions = {
+        'bubbles': true,
+        'button': 0,
+        'screenX': Math.round(clickX - jQuery(window).scrollLeft()),
+        'screenY': Math.round(clickY - jQuery(window).scrollTop()),
+        'clientX': Math.round(clickX - jQuery(window).scrollLeft()),
+        'clientY': Math.round(clickY - jQuery(window).scrollTop()),
+        'offsetX': Math.round(clickX - player.offset().left),
+        'offsetY': Math.round(clickY - player.offset().top),
+        'pageX': Math.round(clickX),
+        'pageY': Math.round(clickY),
+        'currentTarget': player[0]
+      };
+      player[0].dispatchEvent(new MouseEvent('mousemove', eventOptions));
+      setTimeout(function() { thingsHappening -= 1; }, 1);
+    };
+
     // pause
     var pause = function() {
       thingsHappening += 1;
       jQuery('.player-control-button.player-play-pause.pause').click();
-      setTimeout(function() { thingsHappening -= 1; }, 1);
+      setTimeout(function() {
+        hideControls();
+        thingsHappening -= 1;
+      }, 1);
     };
 
     // play
     var play = function() {
       thingsHappening += 1;
       jQuery('.player-control-button.player-play-pause.play').click();
-      setTimeout(function() { thingsHappening -= 1; }, 1);
+      setTimeout(function() {
+        hideControls();
+        thingsHappening -= 1;
+      }, 1);
     };
 
     // 'playing', 'paused', or 'loading'
@@ -63,7 +92,7 @@
     };
 
     // jump to a specific time in the video
-    // this is, by far, the hackiest function I have ever written
+    // this is, by far, the hackiest code I have ever written
     var seek = function(milliseconds) {
       thingsHappening += 1;
 
@@ -104,7 +133,10 @@
           scrubber[0].dispatchEvent(new MouseEvent('mouseup', eventOptions));
           scrubber[0].dispatchEvent(new MouseEvent('mouseout', eventOptions));
 
-          setTimeout(function() { thingsHappening -= 1; }, 1);
+          setTimeout(function() {
+            hideControls();
+            thingsHappening -= 1;
+          }, 1);
         }, 10);
       }, 10);
     };
@@ -187,7 +219,7 @@
         } else {
           var localTime = getPlaybackPosition();
           var timeEstimate = session.lastKnownTime + ((new Date()).getTime() - (session.lastKnownTimeUpdatedAt.getTime() + localTimeMinusServerTimeMedian));
-          if (localTime > timeEstimate && localTime < timeEstimate + 2000) {
+          if (localTime > timeEstimate + 100 && localTime < timeEstimate + 3000) {
             if (getState() === 'playing') {
               pause();
             }
@@ -201,7 +233,7 @@
               play();
             }
             if (Math.abs(timeEstimate - localTime) > 1000) {
-              seek(timeEstimate + 1000);
+              seek(timeEstimate + 2000);
             }
           }
         }
