@@ -210,10 +210,15 @@
 
     setInterval(function() {
       if (session && thingsHappening === 0 && getState() !== 'loading') {
-        if (needToBroadcast) {
-          broadcastSession();
+        if (jQuery('.timeout-wrapper.player-active .icon-play').length > 0) {
+          // if Netflix goes "idle", wake it back up
+          jQuery('.timeout-wrapper.player-active .icon-play').click();
         } else {
-          refreshSession();
+          if (needToBroadcast) {
+            broadcastSession();
+          } else {
+            refreshSession();
+          }
         }
       }
     }, 2000);
