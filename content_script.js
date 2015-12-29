@@ -35,19 +35,19 @@
     var hideControls = function() {
       thingsHappening += 1;
       var player = jQuery('#netflix-player');
-      var clickX = 100; // relative to the document
-      var clickY = 100; // relative to the document
+      var mouseX = 100; // relative to the document
+      var mouseY = 100; // relative to the document
       var eventOptions = {
         'bubbles': true,
         'button': 0,
-        'screenX': Math.round(clickX - jQuery(window).scrollLeft()),
-        'screenY': Math.round(clickY - jQuery(window).scrollTop()),
-        'clientX': Math.round(clickX - jQuery(window).scrollLeft()),
-        'clientY': Math.round(clickY - jQuery(window).scrollTop()),
-        'offsetX': Math.round(clickX - player.offset().left),
-        'offsetY': Math.round(clickY - player.offset().top),
-        'pageX': Math.round(clickX),
-        'pageY': Math.round(clickY),
+        'screenX': mouseX - jQuery(window).scrollLeft(),
+        'screenY': mouseY - jQuery(window).scrollTop(),
+        'clientX': mouseX - jQuery(window).scrollLeft(),
+        'clientY': mouseY - jQuery(window).scrollTop(),
+        'offsetX': mouseX - player.offset().left,
+        'offsetY': mouseY - player.offset().top,
+        'pageX': mouseX,
+        'pageY': mouseY,
         'currentTarget': player[0]
       };
       player[0].dispatchEvent(new MouseEvent('mousemove', eventOptions));
@@ -108,19 +108,19 @@
       setTimeout(function() {
         // compute the parameters for the mouse events
         var factor = milliseconds / duration;
-        var clickX = scrubber.offset().left + scrubber.width() * factor; // relative to the document
-        var clickY = scrubber.offset().top + scrubber.height() / 2;      // relative to the document
+        var mouseX = scrubber.offset().left + Math.round(scrubber.width() * factor); // relative to the document
+        var mouseY = scrubber.offset().top + scrubber.height() / 2;                  // relative to the document
         eventOptions = {
           'bubbles': true,
           'button': 0,
-          'screenX': Math.round(clickX - jQuery(window).scrollLeft()),
-          'screenY': Math.round(clickY - jQuery(window).scrollTop()),
-          'clientX': Math.round(clickX - jQuery(window).scrollLeft()),
-          'clientY': Math.round(clickY - jQuery(window).scrollTop()),
-          'offsetX': Math.round(clickX - scrubber.offset().left),
-          'offsetY': Math.round(clickY - scrubber.offset().top),
-          'pageX': Math.round(clickX),
-          'pageY': Math.round(clickY),
+          'screenX': mouseX - jQuery(window).scrollLeft(),
+          'screenY': mouseY - jQuery(window).scrollTop(),
+          'clientX': mouseX - jQuery(window).scrollLeft(),
+          'clientY': mouseY - jQuery(window).scrollTop(),
+          'offsetX': mouseX - scrubber.offset().left,
+          'offsetY': mouseY - scrubber.offset().top,
+          'pageX': mouseX,
+          'pageY': mouseY,
           'currentTarget': scrubber[0]
         };
 
