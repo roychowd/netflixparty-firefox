@@ -156,7 +156,7 @@
       jQuery.ajax({
         url: 'https://www.netflixparty.com' + relativeUrl,
         method: method,
-        data: JSON.stringify(data)
+        data: method == 'POST' ? JSON.stringify(data) : data
       }).done(done).always(function(data, textStatus, jqXHR) {
         thingsHappening -= 1;
 
