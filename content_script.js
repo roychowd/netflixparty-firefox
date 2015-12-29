@@ -180,28 +180,21 @@
 
     // broadcast the session
     var broadcastSession = function() {
-      var newState = getState() === 'playing' ? 'playing' : 'paused';
-      var newTime = getPlaybackPosition();
-      if (session.state === newState && Math.abs() < 100) {
-        needToBroadcast = false;
-        return;
-      }
-      session.state = newState;
-      session.lastKnownTime = newTime;
+      session.state = getState() === 'playing' ? 'playing' : 'paused';
+      session.lastKnownTime = getPlaybackPosition();
       ajax('/sessions/' + session.id + '/update', 'POST', {
         lastKnownTime: session.lastKnownTime + (session.state === 'playing' ? Math.round(rountTripTimeMedian / 2) : 0),
         state: session.state
       }, function(data, textStatus, jqXHR) {
-        if (getState() !== 'loading') {
-          needToBroadcast = false;
-        }
+        needToBroadcast = false;
       });
     };
 
     // refresh the session
     var refreshSession = function() {
       ajax('/sessions/' + session.id, 'GET', {}, function(data, textStatus, jqXHR) {
-        if (thingsHappening > 1 || needToBroadcast) {
+        if (needToBroadcast) {
+          // don't update from the server if we're about to send the server an update
           return;
         }
 
@@ -245,10 +238,12 @@
       if (session && thingsHappening === 0 && getState() !== 'loading') {
         if (jQuery('.timeout-wrapper.player-active .icon-play').length > 0) {
           // if Netflix goes "idle", wake it back up
+          thingsHappening += 1;
           jQuery('.timeout-wrapper.player-active .icon-play').click();
+          setTimeout(function() { thingsHappening -= 1; }, 1);
         } else {
           if (needToBroadcast) {
-            broadcastSession();
+            setTimeout(function() { broadcastSession(); }, 100);
           } else {
             refreshSession();
           }
@@ -257,15 +252,7 @@
     }, 2000);
 
     // listen for UI events
-    var onUIEvent = function() {
-      if (thingsHappening === 0) {
-        thingsHappening += 1;
-        setTimeout(function() {
-          thingsHappening -= 1;
-          needToBroadcast = true;
-        }, 1000);
-      }
-    };
+    var onUIEvent = function() { needToBroadcast = true; };
     jQuery(window).click(onUIEvent);
     jQuery(window).keydown(onUIEvent);
 
