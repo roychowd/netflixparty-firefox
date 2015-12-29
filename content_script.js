@@ -192,9 +192,6 @@
         lastKnownTime: session.lastKnownTime + (session.state === 'playing' ? Math.round(rountTripTimeMedian / 2) : 0),
         state: session.state
       }, function(data, textStatus, jqXHR) {
-        session = data;
-        session.lastActivity = new Date(session.lastActivity);
-        session.lastKnownTimeUpdatedAt = new Date(session.lastKnownTimeUpdatedAt);
         if (getState() !== 'loading') {
           needToBroadcast = false;
         }
@@ -204,7 +201,7 @@
     // refresh the session
     var refreshSession = function() {
       ajax('/sessions/' + session.id, 'GET', {}, function(data, textStatus, jqXHR) {
-        if (needToBroadcast) {
+        if (thingsHappening > 1 || needToBroadcast) {
           return;
         }
 
