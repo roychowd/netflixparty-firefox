@@ -204,6 +204,10 @@
     // refresh the session
     var refreshSession = function() {
       ajax('/sessions/' + session.id, 'GET', {}, function(data, textStatus, jqXHR) {
+        if (needToBroadcast) {
+          return;
+        }
+
         session = data;
         session.lastActivity = new Date(session.lastActivity);
         session.lastKnownTimeUpdatedAt = new Date(session.lastKnownTimeUpdatedAt);
