@@ -62,6 +62,8 @@ $(function() {
         $('.connected').removeClass('hidden');
         $('#session-id-info').val(sessionId).focus().select();
         $('#show-chat').prop('checked', true);
+        showShareUrl(sessionId);
+        bindCopyShareUrl();
       };
 
       var showDisconnected = function() {
@@ -77,6 +79,12 @@ $(function() {
       }, function(initData) {
         // parse the video ID from the URL
         var videoId = parseInt(tabs[0].url.match(/^.*\/([0-9]+)\??.*/)[1]);
+
+        // if there is a session id in the url, fill the join session input with that value.
+        var sessionIdFromUrl = getSessionIdFromUrl(tabs[0].url);
+        if (sessionIdFromUrl) {
+          $('#session-id-input').val(sessionIdFromUrl).focus().select();
+        }
 
         // initial state
         if (initData.errorMessage) {
@@ -133,3 +141,31 @@ $(function() {
     }
   );
 });
+
+function showShareUrl(sessionId) {
+  chrome.windows.getCurrent(function(w) {
+    chrome.tabs.getSelected(w.id, function (response) {
+      var url = response.url.split('?')[0];
+      var urlWithId = url + '?npSessionId=' + sessionId;
+      $('#share-url').val(urlWithId).focus().select();
+    });
+  });
+}
+
+function getSessionIdFromUrl(url) {
+  return getURLParameter(url, 'npSessionId');
+}
+
+function getURLParameter(url, key) {
+  var searchString = '?' + url.split('?')[1];
+  var regex = new RegExp('[?|&]' + key + '=' + '([^&;]+?)(&|#|;|$)');
+  return decodeURIComponent((regex.exec(searchString)||[,""])[1].replace(/\+/g, '%20')) || null
+}
+
+function bindCopyShareUrl() {
+  $('#copy-btn').on('click', function(e) {
+    e.preventDefault();
+    $('#share-url').select();
+    document.execCommand('copy');
+  });
+}
