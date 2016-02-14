@@ -1,6 +1,20 @@
 'use strict';
 
 $(function() {
+  var getURLParameter = function(url, key) {
+    var searchString = '?' + url.split('?')[1];
+    if (searchString === undefined) {
+      return null;
+    }
+    var escapedKey = key.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+    var regex = new RegExp('[?|&]' + escapedKey + '=' + '([^&]*)(&|$)');
+    var match = regex.exec(searchString);
+    if (match === null) {
+      return null;
+    }
+    return decodeURIComponent(match[1]);
+  };
+
   // get the current tab
   chrome.tabs.query({
       active: true,
@@ -21,6 +35,7 @@ $(function() {
 
       // set up the spinner
       var startSpinning = function() {
+        $('#control-lock').prop('disabled', true);
         $('#session-id-input').prop('disabled', true);
         $('#join-session').prop('disabled', true);
         $('#create-session').prop('disabled', true);
@@ -28,6 +43,7 @@ $(function() {
       };
 
       var stopSpinning = function() {
+        $('#control-lock').prop('disabled', false);
         $('#session-id-input').prop('disabled', false);
         $('#join-session').prop('disabled', false);
         $('#create-session').prop('disabled', false);
@@ -58,12 +74,11 @@ $(function() {
 
       // connected/disconnected state
       var showConnected = function(sessionId) {
+        var urlWithSessionId = tabs[0].url.split('?')[0] + '?npSessionId=' + encodeURIComponent(sessionId);
         $('.disconnected').addClass('hidden');
         $('.connected').removeClass('hidden');
-        $('#session-id-info').val(sessionId).focus().select();
         $('#show-chat').prop('checked', true);
-        showShareUrl(sessionId);
-        bindCopyShareUrl();
+        $('#share-url').val(urlWithSessionId).focus().select();
       };
 
       var showDisconnected = function() {
@@ -80,19 +95,23 @@ $(function() {
         // parse the video ID from the URL
         var videoId = parseInt(tabs[0].url.match(/^.*\/([0-9]+)\??.*/)[1]);
 
-        // if there is a session id in the url, fill the join session input with that value.
-        var sessionIdFromUrl = getSessionIdFromUrl(tabs[0].url);
-        if (sessionIdFromUrl) {
-          $('#session-id-input').val(sessionIdFromUrl).focus().select();
-        }
-
         // initial state
         if (initData.errorMessage) {
           showError(initData.errorMessage);
           return;
         }
         if (initData.sessionId === null) {
-          $('#session-id-input').focus();
+          var sessionIdFromUrl = getURLParameter(tabs[0].url, 'npSessionId');
+          if (sessionIdFromUrl) {
+            sendMessage('joinSession', {
+              sessionId: sessionIdFromUrl.replace(/^\s+|\s+$/g, '').toLowerCase(),
+              videoId: videoId
+            }, function(response) {
+              showConnected(sessionIdFromUrl);
+            });
+          } else {
+            $('#session-id-input').focus();
+          }
         } else {
           showConnected(initData.sessionId);
         }
@@ -137,35 +156,15 @@ $(function() {
         $('#show-chat').change(function() {
           sendMessage('showChat', { visible: $('#show-chat').is(':checked') }, null);
         });
+
+        // listen for clicks on the "Copy URL" link
+        $('#copy-btn').click(function(e) {
+          e.stopPropagation();
+          e.preventDefault();
+          $('#share-url').select();
+          document.execCommand('copy');
+        });
       });
     }
   );
 });
-
-function showShareUrl(sessionId) {
-  chrome.windows.getCurrent(function(w) {
-    chrome.tabs.getSelected(w.id, function (response) {
-      var url = response.url.split('?')[0];
-      var urlWithId = url + '?npSessionId=' + sessionId;
-      $('#share-url').val(urlWithId).focus().select();
-    });
-  });
-}
-
-function getSessionIdFromUrl(url) {
-  return getURLParameter(url, 'npSessionId');
-}
-
-function getURLParameter(url, key) {
-  var searchString = '?' + url.split('?')[1];
-  var regex = new RegExp('[?|&]' + key + '=' + '([^&;]+?)(&|#|;|$)');
-  return decodeURIComponent((regex.exec(searchString)||[,""])[1].replace(/\+/g, '%20')) || null
-}
-
-function bindCopyShareUrl() {
-  $('#copy-btn').on('click', function(e) {
-    e.preventDefault();
-    $('#share-url').select();
-    document.execCommand('copy');
-  });
-}

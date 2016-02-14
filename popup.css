@@ -126,3 +126,7 @@ button:disabled {
 .spinner {
   margin-left: 8px;
 }
+
+.copy-val {
+  margin-top: -12px;
+}

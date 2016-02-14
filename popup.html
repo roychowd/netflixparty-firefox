@@ -10,27 +10,25 @@
   <body>
     <div class="no-error">
       <div class="disconnected">
-        <h2>Create a session</h2>
+        <h2>Create a Netflix Party</h2>
         <p>
           <label><input type="checkbox" id="control-lock"> Only I have control</label>
         </p>
         <p>
-          <button id="create-session" type="button">Create session</button>
+          <button id="create-session" type="button">Start the party</button>
         </p>
         <hr />
-        <h2>Join a session</h2>
-        <input id="session-id-input" type="text" autocomplete="off" autofocus placeholder="Session ID" />
+        <h2>Join a Netflix Party</h2>
+        <input id="session-id-input" type="text" autocomplete="off" autofocus placeholder="Party ID" />
         <p>
-          <button id="join-session" type="button">Join session</button>
+          <button id="join-session" type="button">Join the party</button>
         </p>
       </div>
       <div class="connected hidden">
-        <h3>Session ID:</h3>
-        <input id="session-id-info" type="text" readonly="true" autocomplete="off" autofocus />
-        <h3>Share URL:</h3>
-        <input id="share-url" type="text" readonly="true" />
-        <p>
-          <small><a href="#" id="copy-btn">Copy Url</a></small>
+        <p>Share the URL below so others can join the party. The recipient(s) should navigate to this URL and then open Netflix Party to join.</p>
+        <input id="share-url" type="text" readonly="true" autocomplete="off" autofocus />
+        <p class="copy-val">
+          <small><a href="#" id="copy-btn">Copy URL</a></small>
         </p>
         <p>
           <label><input type="checkbox" id="show-chat"> Show chat</label>
