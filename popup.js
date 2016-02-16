@@ -30,22 +30,17 @@ $(function() {
       $('#close-error').click(function() {
         $('.no-error').removeClass('hidden');
         $('.some-error').addClass('hidden');
-        $('#session-id-input').focus();
       });
 
       // set up the spinner
       var startSpinning = function() {
         $('#control-lock').prop('disabled', true);
-        $('#session-id-input').prop('disabled', true);
-        $('#join-session').prop('disabled', true);
         $('#create-session').prop('disabled', true);
         $('#leave-session').prop('disabled', true);
       };
 
       var stopSpinning = function() {
         $('#control-lock').prop('disabled', false);
-        $('#session-id-input').prop('disabled', false);
-        $('#join-session').prop('disabled', false);
         $('#create-session').prop('disabled', false);
         $('#leave-session').prop('disabled', false);
       };
@@ -85,7 +80,6 @@ $(function() {
         $('.disconnected').removeClass('hidden');
         $('.connected').addClass('hidden');
         $('#control-lock').prop('checked', false);
-        $('#session-id-input').val('').focus();
       };
 
       // get the session if there is one
@@ -109,31 +103,11 @@ $(function() {
             }, function(response) {
               showConnected(sessionIdFromUrl);
             });
-          } else {
-            $('#session-id-input').focus();
           }
         } else {
           showConnected(initData.sessionId);
         }
         $('#show-chat').prop('checked', initData.chatVisible);
-
-        // listen for the enter key in the session id field
-        $('#session-id-input').keydown(function(e) {
-          if (e.which === 13) {
-            $('#join-session').click();
-          }
-        });
-
-        // listen for clicks on the "Join session" button
-        $('#join-session').click(function() {
-          var sessionId = $('#session-id-input').val();
-          sendMessage('joinSession', {
-            sessionId: sessionId.replace(/^\s+|\s+$/g, '').toLowerCase(),
-            videoId: videoId
-          }, function(response) {
-            showConnected(sessionId);
-          });
-        });
 
         // listen for clicks on the "Create session" button
         $('#create-session').click(function() {
