@@ -131,6 +131,13 @@ $(function() {
           sendMessage('showChat', { visible: $('#show-chat').is(':checked') }, null);
         });
 
+        // listen for clicks on the share URL box
+        $('#share-url').click(function(e) {
+          e.stopPropagation();
+          e.preventDefault();
+          $('#share-url').select();
+        });
+
         // listen for clicks on the "Copy URL" link
         $('#copy-btn').click(function(e) {
           e.stopPropagation();
