@@ -296,10 +296,7 @@
     //////////////////////////////////////////////////////////////////////////
 
     // connection to the server
-    // we don't use HTTPS (WSS) here because CloudFlare (our CDN) only supports
-    // websockets for "enterprise" customers. so for now we use HTTP (WS) and
-    // bypass CloudFlare.
-    var socket = io('http://api.netflixparty.com');
+    var socket = io('https://netflixparty-server.herokuapp.com');
 
     // get the userId from the server
     var userId = null;
