@@ -550,6 +550,9 @@
       if (visible) {
         jQuery('#netflix-player').addClass('with-chat');
         jQuery('#chat-container').show();
+        if (!document.hasFocus()) {
+          clearUnreadCount();
+        }
       } else {
         jQuery('#chat-container').hide();
         jQuery('#netflix-player').removeClass('with-chat');
@@ -581,11 +584,18 @@
       }
     };
 
-    // clear the unread count when the window is focused
-    jQuery(window).focus(function() {
+    // clear the unread count
+    var clearUnreadCount = function() {
       if (unreadCount > 0) {
         unreadCount = 0;
         document.title = originalTitle;
+      }
+    };
+
+    // clear the unread count when the window is focused
+    jQuery(window).focus(function() {
+      if (getChatVisible()) {
+        clearUnreadCount();
       }
     });
 
